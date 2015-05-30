@@ -10,7 +10,7 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
     /**
      * Logger for logging progress messages
      */
-    private static final Logger logger = Logger.getLogger(ThreadPoolWithJobAffinityExecutorES.class.getName());
+    private static final Logger logger = Logger.getLogger(ThreadPoolWithJobAffinityExecutor.class.getName());
 
     /**
      * Default size of the thread pool

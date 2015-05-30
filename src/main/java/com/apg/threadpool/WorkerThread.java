@@ -2,8 +2,15 @@ package com.apg.threadpool;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WorkerThread extends Thread {
+    /**
+     * Logger for logging progress messages
+     */
+    private static final Logger logger = Logger.getLogger(WorkerThread.class.getName());
+
     /**
      * Task Queue of the Thread
      */
@@ -55,15 +62,20 @@ public class WorkerThread extends Thread {
             task = this.getTaskQueue().poll();
             if(task != null){
                 try{
+                    logger.log(Level.INFO,this.getId() + ": Started Executing new task from the task queue");
                     task.run();
+                    logger.log(Level.INFO,this.getId() + ": Finished Executing new task from the task queue");
                 }catch (Exception e){
                     e.printStackTrace();
                 }
             }else{
-                if(!isActive())
+                if(!isActive()) {
+                    logger.log(Level.INFO,this.getId() + ": Triggering shutdown of thread.");
                     break;
+                }
                 else{
                     try{
+                        logger.log(Level.INFO, this.getId() + ": No tasks in queue, sleeping for 1s");
                         Thread.sleep(1000);
                     }catch (InterruptedException ex){
                         ex.printStackTrace();

@@ -23,14 +23,25 @@ public class WorkerThread extends Thread {
         return taskQueue;
     }
 
+    /**
+     * Add a new runnable task to the queue.
+     * @param task - a runnable task
+     */
     public void addTask(Runnable task){
         this.getTaskQueue().add(task);
     }
 
+    /**
+     * Returns true or false if the thread is active or not
+     * @return
+     */
     public boolean isActive(){
         return this.active;
     }
 
+    /**
+     * Sets the thread to inactive.
+     */
     public void shutdown(){
         this.active = false;
     }

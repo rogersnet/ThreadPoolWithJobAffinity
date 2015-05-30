@@ -6,9 +6,9 @@
   
   ##Two implementations are provided :-
   
-  * First implementation uses a hash map to map partition ids to worker thread, thereby ensuring that each partition is assigned a unique worker thread. Each worker thread maintains unbounded task queue. 
-  * Second implementation uses a hash map to map partition ids to SingleThreadedExecutors. Each executor maintains its own unbounded queue. 
-  
+    * First implementation uses a hash map to map partition ids to worker thread, thereby ensuring that each partition is assigned a unique worker thread. Each worker thread maintains unbounded task queue. 
+    * Second implementation uses a hash map to map partition ids to SingleThreadedExecutors. Each executor maintains its own unbounded queue. 
+    
   ##Assumptions:-
     * The thread pool creation and job submission are executed inside a single parent thread.
     * The tasks waiting in a queue for a thread do not have any timeout.  

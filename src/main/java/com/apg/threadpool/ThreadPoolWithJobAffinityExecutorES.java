@@ -4,12 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A Fixed Size thread pool with job affinity. Underlying implementation uses SingleThreadedExecutor
  * for each jobId or collection of jobId's mapping to a same bin partition
  */
 public class ThreadPoolWithJobAffinityExecutorES implements ThreadPoolWithJobAffinity {
+    /**
+     * Logger for logging progress messages
+     */
+    private static final Logger logger = Logger.getLogger(ThreadPoolWithJobAffinityExecutorES.class.getName());
+
     /**
      * Default size of the thread pool
      */
@@ -57,17 +64,26 @@ public class ThreadPoolWithJobAffinityExecutorES implements ThreadPoolWithJobAff
     }
 
     public void submit(String jobId, Runnable job) {
-        if(isShutdown())
+        if(isShutdown()) {
+            logger.log(Level.SEVERE,"Job submitted while shutting down",job);
             throw new IllegalStateException("Thread Pool Inactive");
+        }
 
         int binPartition = (Integer)getPartitionId(jobId);
+        logger.log(Level.INFO,"Got a new Job - Assigning to worker partition(" + binPartition + ")", job);
+
         if(!this.partitionExecutors.containsKey(binPartition)){
+            logger.log(Level.INFO, "Adding a new executor for partition(" + binPartition + ")");
+
             this.partitionExecutors.put(binPartition,Executors.newSingleThreadExecutor());
         }
         this.partitionExecutors.get(binPartition).submit(job);
     }
 
     public void shutdown() {
+
+        logger.log(Level.INFO,"Shutting down the thread pool");
+
         //set the shutdown flag
         shutdown = true;
 

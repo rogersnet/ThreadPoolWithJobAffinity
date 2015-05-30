@@ -3,8 +3,15 @@ package com.apg.threadpool;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffinity {
+    /**
+     * Logger for logging progress messages
+     */
+    private static final Logger logger = Logger.getLogger(ThreadPoolWithJobAffinityExecutorES.class.getName());
+
     /**
      * Default size of the thread pool
      */
@@ -69,16 +76,20 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
     public void submit(String jobId, Runnable job) {
 
         if(isShutdown()){
+            logger.log(Level.SEVERE,"Job submitted while shutting down",job);
             throw new IllegalStateException("Thread Pool inactive");
         }
 
         int threadPartition = this.getPartitionId(jobId);
+        logger.log(Level.INFO,"Got a new Job - Assigning to worker partition(" + threadPartition + ")", job);
 
         //check if the partition id already present, if yes, add it to the queue
         //else create a new worker thread and assign it to the partition
         if(this.partitionWorkers.containsKey((Integer)threadPartition)){
+            logger.log(Level.INFO,"Adding job with id " + jobId + " to worker on partition(" + threadPartition + ")");
             this.getPartitionWorker((Integer)threadPartition).addTask(job);
         }else{
+            logger.log(Level.INFO, "Adding a new worker for partition(" + threadPartition + ")");
             this.addWorker((Integer)threadPartition,job);
         }
     }
@@ -87,6 +98,8 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
      * Send a shutdown signal to all the worker threads, wait for the threads to complete processing
      */
     public void shutdown() {
+        logger.log(Level.INFO,"Shutting down thread pool");
+
         //set shutdown flag
         shutdown = true;
 

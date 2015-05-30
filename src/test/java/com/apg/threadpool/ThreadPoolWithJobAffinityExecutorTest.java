@@ -4,8 +4,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.lang.reflect.Field;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
@@ -105,20 +103,7 @@ public class ThreadPoolWithJobAffinityExecutorTest {
         threadPool.submit("1",r1);
         threadPool.submit("1",r2);
 
-        Class<?> threadPoolClass = threadPool.getClass();
-        try {
-            Field queueField = threadPoolClass.getDeclaredField("jobQueue");
-            queueField.setAccessible(true);
-
-            //check the size of the current queue
-            ConcurrentHashMap queue = (ConcurrentHashMap)queueField.get(threadPoolClass);
-            assertEquals(1,queue.size());
-
-            assertEquals(2,queue.get(()));
-
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-
+        //check the thread pool size, should be one
+        assertEquals(1,threadPool.poolSize());
     }
 }

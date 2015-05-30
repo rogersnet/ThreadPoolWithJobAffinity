@@ -1,6 +1,7 @@
 package com.apg.threadpool;
 
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class WorkerThread extends Thread {
     /**
@@ -14,15 +15,16 @@ public class WorkerThread extends Thread {
     private boolean active;
 
     public WorkerThread(){
-        this.active = true;
+        this.active    = true;
+        this.taskQueue = new ConcurrentLinkedQueue<Runnable>();
     }
 
     public Queue<Runnable> getTaskQueue() {
         return taskQueue;
     }
 
-    public void setTaskQueue(Queue<Runnable> taskQueue) {
-        this.taskQueue = taskQueue;
+    public void addTask(Runnable task){
+        this.getTaskQueue().add(task);
     }
 
     public boolean isActive(){
@@ -49,6 +51,13 @@ public class WorkerThread extends Thread {
             }else{
                 if(!isActive())
                     break;
+                else{
+                    try{
+                        Thread.sleep(1000);
+                    }catch (InterruptedException ex){
+                        ex.printStackTrace();
+                    }
+                }
             }
         }
     }

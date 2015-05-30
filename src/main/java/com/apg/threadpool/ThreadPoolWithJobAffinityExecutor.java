@@ -2,6 +2,7 @@ package com.apg.threadpool;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffinity {
     /**
@@ -10,16 +11,10 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
     public static final int DEFAULT_POOL_SIZE = 10;
 
     /**
-     * A Concurrent HashMap to keep track of job queue. Each jobId will have a
-     * distinct queue which will be picked up by a thread for processing
+     * A Concurrent HashMap to keep track of job partitions and workers working on it.
+     * Each jobId will have only one worker with a distinct queue which will be picked up by a thread for processing
      */
-    private ConcurrentHashMap<Integer,Queue<Runnable>> jobQueue;
-
-    /**
-     * A Synchronized HashMap to keep track of partition id and worker thread. Each job submitted
-     * with a specific job id will be executed by one of the worker threads.
-     */
-    private List<WorkerThread> workers;
+    private Map<Integer,WorkerThread> partitionWorkers;
 
     /**
      * Size of the Thread Pool. This is equivalent to the number of current worker threads created.
@@ -29,26 +24,23 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
     /**
      * Flag to indicate a shutdown is triggered and no further jobs will be submitted
      */
-    private volatile boolean shutdown;
+    private boolean shutdown;
 
     /**
      * Constructor to initialize the thread pool with some specific number
      * @param poolSize
      */
     public ThreadPoolWithJobAffinityExecutor(int poolSize){
-        this.maxPoolSize  = poolSize;
-        this.jobQueue     = new ConcurrentHashMap<Integer, Queue<Runnable>>(this.maxPoolSize);
-        this.workers      = Collections.synchronizedList(new ArrayList<WorkerThread>(this.maxPoolSize));
-
+        this.maxPoolSize      = poolSize;
+        this.partitionWorkers = new HashMap<Integer, WorkerThread>(this.maxPoolSize);
     }
 
     /**
      * Constructor to initialize the thread pool with the default pool size
      */
     public ThreadPoolWithJobAffinityExecutor(){
-        this.maxPoolSize  = DEFAULT_POOL_SIZE;
-        this.jobQueue     = new ConcurrentHashMap<Integer, Queue<Runnable>>(this.maxPoolSize);
-        this.workers      = Collections.synchronizedList(new ArrayList<WorkerThread>(this.maxPoolSize));
+        this.maxPoolSize      = DEFAULT_POOL_SIZE;
+        this.partitionWorkers = new HashMap<Integer, WorkerThread>(this.maxPoolSize);
     }
 
     /**
@@ -56,7 +48,7 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
      * @return
      */
     public int poolSize() {
-        return jobQueue.size();
+        return partitionWorkers.size();
     }
 
     /**
@@ -65,6 +57,7 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
     public boolean isShutdown(){
         return shutdown;
     }
+
 
     /**
      * When a new task with jobId is submitted, we first obtain the partition id by taking the
@@ -79,27 +72,14 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
             throw new IllegalStateException("Thread Pool inactive");
         }
 
-        //get hash code for the job id
-        int jobHash = jobId.hashCode();
-
-        //get partition id based on the hash code
-        int threadPartition = ((jobHash) % this.maxPoolSize);
+        int threadPartition = this.getPartitionId(jobId);
 
         //check if the partition id already present, if yes, add it to the queue
         //else create a new worker thread and assign it to the partition
-        if(this.jobQueue.containsKey((Integer)threadPartition)){
-            this.jobQueue.get((Integer)threadPartition).add(job);
+        if(this.partitionWorkers.containsKey((Integer)threadPartition)){
+            this.getPartitionWorker((Integer)threadPartition).addTask(job);
         }else{
-            //create a new job partition
-            Queue<Runnable> taskQueue = new LinkedList<Runnable>();
-            this.jobQueue.put((Integer)threadPartition,taskQueue);
-            taskQueue.add(job);
-
-            //create a new worker thread and assign the task queue to this thread
-            WorkerThread wThread = new WorkerThread();
-            wThread.setTaskQueue(this.jobQueue.get((Integer) threadPartition));
-            this.workers.add(wThread);
-            wThread.start();
+            this.addWorker((Integer)threadPartition,job);
         }
     }
 
@@ -111,17 +91,47 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
         shutdown = true;
 
         //send shutdown signal to all worker threads
-        for(WorkerThread wThreads: this.workers){
-            wThreads.shutdown();
+        for(Integer partId: this.partitionWorkers.keySet()){
+            this.getPartitionWorker(partId).shutdown();
         }
 
         //wait for the worker threads to finish
         try {
-            for(WorkerThread wThreads: this.workers){
-                wThreads.join();
+            for(Integer partId: this.partitionWorkers.keySet()){
+                this.getPartitionWorker(partId).join();
             }
         }catch (InterruptedException ex){
             ex.printStackTrace();
         }
+    }
+
+    /**
+     * Adds a new worker to a fresh partiion list
+     */
+    private void addWorker(Integer partitionId,Runnable job){
+        //create a new worker thread
+        WorkerThread wThread = new WorkerThread();
+
+        //assign the partition to the newly worker thread
+        this.partitionWorkers.put(partitionId,wThread);
+
+        //assign the job to the worker and start
+        wThread.addTask(job);
+        wThread.start();
+    }
+
+    /**
+     * Get partition id from job_id
+     */
+    private int getPartitionId(String jobId){
+        int jobHash = jobId.hashCode();
+        return ((jobHash) % this.maxPoolSize);
+    }
+
+    /**
+     * Get get partition worker
+     */
+    private WorkerThread getPartitionWorker(Integer partitionId){
+        return this.partitionWorkers.get(partitionId);
     }
 }

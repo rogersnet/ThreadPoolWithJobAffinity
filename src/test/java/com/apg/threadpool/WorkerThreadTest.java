@@ -27,14 +27,12 @@ public class WorkerThreadTest {
     public void checkTestTaskExecution(){
         WorkerThread wThread = new WorkerThread();
 
-        Queue<Runnable> taskList = new LinkedList<Runnable>();
-        taskList.add(new Runnable() {
+        wThread.addTask(new Runnable() {
             public void run() {
                 sampleInteger++;
             }
         });
 
-        wThread.setTaskQueue(taskList);
         wThread.start();
         wThread.shutdown();
 
@@ -51,19 +49,18 @@ public class WorkerThreadTest {
     public void checkTestMultipleTaskExecution(){
         WorkerThread wThread = new WorkerThread();
 
-        Queue<Runnable> taskList = new LinkedList<Runnable>();
-        taskList.add(new Runnable() {
-            public void run() {
-                sampleInteger++;
-            }
-        });
-        taskList.add(new Runnable() {
+        wThread.addTask(new Runnable() {
             public void run() {
                 sampleInteger++;
             }
         });
 
-        wThread.setTaskQueue(taskList);
+        wThread.addTask(new Runnable() {
+            public void run() {
+                sampleInteger++;
+            }
+        });
+
         wThread.start();
         wThread.shutdown();
 
@@ -80,17 +77,14 @@ public class WorkerThreadTest {
     public void checkTestMultipleTaskExecutionPostStart(){
         WorkerThread wThread = new WorkerThread();
 
-        Queue<Runnable> taskList = new LinkedList<Runnable>();
-        taskList.add(new Runnable() {
+        wThread.addTask(new Runnable() {
             public void run() {
                 sampleInteger++;
             }
         });
-
-        wThread.setTaskQueue(taskList);
         wThread.start();
 
-        taskList.add(new Runnable() {
+        wThread.addTask(new Runnable() {
             public void run() {
                 sampleInteger++;
             }

@@ -12,6 +12,7 @@ The distribution of jobs to the workers is done through a very basic scheme.
 ## Assumptions:-
 * The thread pool creation and job submission are executed inside a single parent thread.
 * The tasks waiting in a queue for a thread do not have any timeout. 
+* There is a good distribution of jobs across the worker threads. 
     
 ## Usage Examples:-
   Please check out the unit tests.

@@ -87,10 +87,10 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
         //else create a new worker thread and assign it to the partition
         if(this.partitionWorkers.containsKey((Integer)threadPartition)){
             logger.log(Level.INFO,"Adding job with id " + jobId + " to worker on partition(" + threadPartition + ")");
-            this.getPartitionWorker((Integer)threadPartition).addTask(job);
+            this.getPartitionWorker((Integer)threadPartition).addTask(jobId,job);
         }else{
             logger.log(Level.INFO, "Adding a new worker for partition(" + threadPartition + ")");
-            this.addWorker((Integer)threadPartition,job);
+            this.addWorker((Integer)threadPartition,jobId,job);
         }
     }
 
@@ -121,7 +121,7 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
     /**
      * Adds a new worker to a fresh partiion list
      */
-    private void addWorker(Integer partitionId,Runnable job){
+    private void addWorker(Integer partitionId,String jobId, Runnable job){
         //create a new worker thread
         WorkerThread wThread = new WorkerThread();
 
@@ -129,7 +129,8 @@ public class ThreadPoolWithJobAffinityExecutor implements ThreadPoolWithJobAffin
         this.partitionWorkers.put(partitionId,wThread);
 
         //assign the job to the worker and start
-        wThread.addTask(job);
+        logger.log(Level.INFO,"Adding job with id " + jobId + " to worker on partition(" + partitionId + ")");
+        wThread.addTask(jobId,job);
         wThread.start();
     }
 

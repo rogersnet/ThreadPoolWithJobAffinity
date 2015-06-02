@@ -27,7 +27,7 @@ public class WorkerThreadTest {
     public void checkTestTaskExecution(){
         WorkerThread wThread = new WorkerThread();
 
-        wThread.addTask(new Runnable() {
+        wThread.addTask("1",new Runnable() {
             public void run() {
                 sampleInteger++;
             }
@@ -49,13 +49,13 @@ public class WorkerThreadTest {
     public void checkTestMultipleTaskExecution(){
         WorkerThread wThread = new WorkerThread();
 
-        wThread.addTask(new Runnable() {
+        wThread.addTask("1",new Runnable() {
             public void run() {
                 sampleInteger++;
             }
         });
 
-        wThread.addTask(new Runnable() {
+        wThread.addTask("2",new Runnable() {
             public void run() {
                 sampleInteger++;
             }
@@ -77,14 +77,14 @@ public class WorkerThreadTest {
     public void checkTestMultipleTaskExecutionPostStart(){
         WorkerThread wThread = new WorkerThread();
 
-        wThread.addTask(new Runnable() {
+        wThread.addTask("1",new Runnable() {
             public void run() {
                 sampleInteger++;
             }
         });
         wThread.start();
 
-        wThread.addTask(new Runnable() {
+        wThread.addTask("1",new Runnable() {
             public void run() {
                 sampleInteger++;
             }

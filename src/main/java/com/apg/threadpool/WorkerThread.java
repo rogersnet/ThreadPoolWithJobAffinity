@@ -14,7 +14,7 @@ public class WorkerThread extends Thread {
     /**
      * Task Queue of the Thread
      */
-    private Queue<Runnable> taskQueue;
+    private Queue<TaskStructure> taskQueue;
 
     /**
      * flag to indicate a shutdown, should not accept any more tasks
@@ -23,10 +23,10 @@ public class WorkerThread extends Thread {
 
     public WorkerThread(){
         this.active    = true;
-        this.taskQueue = new ConcurrentLinkedQueue<Runnable>();
+        this.taskQueue = new ConcurrentLinkedQueue<TaskStructure>();
     }
 
-    public Queue<Runnable> getTaskQueue() {
+    public Queue<TaskStructure> getTaskQueue() {
         return taskQueue;
     }
 
@@ -34,8 +34,8 @@ public class WorkerThread extends Thread {
      * Add a new runnable task to the queue.
      * @param task - a runnable task
      */
-    public void addTask(Runnable task){
-        this.getTaskQueue().add(task);
+    public void addTask(String jobId, Runnable task){
+        this.getTaskQueue().add(new TaskStructure(jobId,task));
     }
 
     /**
@@ -57,14 +57,14 @@ public class WorkerThread extends Thread {
      * Pick a task from the task queue and execute it
      */
     public void run(){
-        Runnable task;
+        TaskStructure task;
         while(true){
             task = this.getTaskQueue().poll();
             if(task != null){
                 try{
-                    logger.log(Level.INFO,this.getId() + ": Started Executing new task from the task queue");
-                    task.run();
-                    logger.log(Level.INFO,this.getId() + ": Finished Executing new task from the task queue");
+                    logger.log(Level.INFO,this.getId() + ": Started Executing new task from the task queue with jobId:" + task.getJobId());
+                    task.getTask().run();
+                    logger.log(Level.INFO,this.getId() + ": Finished Executing new task from the task queue with jobId:" + task.getJobId());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -82,6 +82,27 @@ public class WorkerThread extends Thread {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * An inner class to hold the task structure
+     */
+    private final class TaskStructure{
+        private String jobId;
+        private Runnable task;
+
+        TaskStructure(String jobId,Runnable task){
+            this.jobId = jobId;
+            this.task  = task;
+        }
+
+        public String getJobId(){
+            return this.jobId;
+        }
+
+        public Runnable getTask(){
+            return this.task;
         }
     }
 }

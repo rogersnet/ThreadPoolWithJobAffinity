@@ -77,6 +77,8 @@ public class ThreadPoolWithJobAffinityExecutorES implements ThreadPoolWithJobAff
 
             this.partitionExecutors.put(binPartition,Executors.newSingleThreadExecutor());
         }
+
+        logger.log(Level.INFO,"Adding job with id " + jobId + " to executor on partition(" + binPartition + ")");
         this.partitionExecutors.get(binPartition).submit(job);
     }
 

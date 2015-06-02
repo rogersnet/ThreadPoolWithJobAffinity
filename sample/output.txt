@@ -1,1 +1,83 @@
-System.out.println("Job 1 --- Task 3");
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Got a new Job - Assigning to worker partition(9)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Adding a new worker for partition(9)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor addWorker
+INFO: Adding job with id 1 to worker on partition(9)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.WorkerThread run
+INFO: 9: Started Executing new task from the task queue with jobId:1
+Job 1 --- Task 1
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Got a new Job - Assigning to worker partition(9)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.WorkerThread run
+INFO: 9: Finished Executing new task from the task queue with jobId:1
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Adding job with id 1 to worker on partition(9)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.WorkerThread run
+INFO: 9: No tasks in queue, sleeping for 1s
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Got a new Job - Assigning to worker partition(9)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Adding job with id 1 to worker on partition(9)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Got a new Job - Assigning to worker partition(0)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Adding a new worker for partition(0)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor addWorker
+INFO: Adding job with id 2 to worker on partition(0)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.WorkerThread run
+INFO: 10: Started Executing new task from the task queue with jobId:2
+Job 2 --- Task 1
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Got a new Job - Assigning to worker partition(1)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.WorkerThread run
+INFO: 10: Finished Executing new task from the task queue with jobId:2
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Adding a new worker for partition(1)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.WorkerThread run
+INFO: 10: No tasks in queue, sleeping for 1s
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor addWorker
+INFO: Adding job with id 3 to worker on partition(1)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.WorkerThread run
+INFO: 11: Started Executing new task from the task queue with jobId:3
+Job 3 --- Task 1
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Got a new Job - Assigning to worker partition(1)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.WorkerThread run
+INFO: 11: Finished Executing new task from the task queue with jobId:3
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Adding job with id 3 to worker on partition(1)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.WorkerThread run
+INFO: 11: No tasks in queue, sleeping for 1s
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Got a new Job - Assigning to worker partition(0)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor submit
+INFO: Adding job with id 2 to worker on partition(0)
+Jun 02, 2015 10:43:59 PM com.apg.threadpool.ThreadPoolWithJobAffinityExecutor shutdown
+INFO: Shutting down thread pool
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 9: Started Executing new task from the task queue with jobId:1
+Job 1 --- Task 2
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 9: Finished Executing new task from the task queue with jobId:1
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 9: Started Executing new task from the task queue with jobId:1
+Job 1 --- Task 3
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 9: Finished Executing new task from the task queue with jobId:1
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 9: Triggering shutdown of thread.
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 10: Started Executing new task from the task queue with jobId:2
+Job 2 --- Task 2
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 10: Finished Executing new task from the task queue with jobId:2
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 11: Started Executing new task from the task queue with jobId:3
+Job 3 --- Task 2
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 10: Triggering shutdown of thread.
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 11: Finished Executing new task from the task queue with jobId:3
+Jun 02, 2015 10:44:00 PM com.apg.threadpool.WorkerThread run
+INFO: 11: Triggering shutdown of thread.
